@@ -35,17 +35,15 @@ jobs:
     - name: Build Project
       run: yarn build
 
-    # Optional: Version bumping (e.g., using standard-version)
-    # - name: Bump version and generate changelog
-    #   run: npx standard-version --commit-all --release-as patch # Or minor/major
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # To push commit/tag
+    - name: Bump version and generate changelog
+      run: npx standard-version --commit-all --release-as patch
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    # Optional: Push changes (if version bumping)
-    # - name: Push changes to repository
-    #   run: git push --follow-tags origin ${{ github.ref_name }}
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Push changes to repository
+      run: git push --follow-tags origin ${{ github.ref_name }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Publish to npm
       run: yarn publish --access public
