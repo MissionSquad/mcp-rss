@@ -35,6 +35,11 @@ jobs:
     - name: Build Project
       run: yarn build
 
+    - name: Configure Git
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
     - name: Bump version and generate changelog
       run: npx standard-version --commit-all --release-as patch
       env:
