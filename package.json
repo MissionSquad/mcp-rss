@@ -1,0 +1,51 @@
+{
+  "name": "@missionsquad/mcp-rss",
+  "version": "1.0.0",
+  "description": "MCP server for fetching, parsing, and managing RSS feeds",
+  "main": "dist/index.js",
+  "type": "module",
+  "bin": {
+    "mcp-rss": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "inspect": "fastmcp inspect src/index.ts",
+    "clean": "rm -rf dist",
+    "test": "jest"
+  },
+  "keywords": [
+    "mcp",
+    "rss",
+    "feed",
+    "atom",
+    "xml"
+  ],
+  "author": "Mission Squad",
+  "repository": "https://github.com/missionsquad/mcp-rss",
+  "homepage": "https://github.com/missionsquad/mcp-rss/",
+  "bugs": "https://github.com/missionsquad/mcp-rss/issues",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@missionsquad/fastmcp": "^1.1.0",
+    "@rowanmanning/feed-parser": "^2.0.0",
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1",
+    "isomorphic-dompurify": "^2.0.0",
+    "jsdom": "^23.0.0",
+    "nanoid": "3.3.10",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@types/jsdom": "^21.1.6",
+    "@types/node": "^20.0.0",
+    "jest": "^29.0.0",
+    "ts-node-dev": "^2.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
