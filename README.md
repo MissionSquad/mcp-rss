@@ -59,4 +59,4 @@ Configure the server using environment variables defined in `.env`. See `.env.ex
 
 ## Try it on Mission Squad
 
-You can test the `mcp-rss` server and other MCP servers on the [Mission Squad](https://missionsquad.ai) platform. Mission Squad is an Agentic AI Platform that allows you to build, manage, and deploy cooperative agents that connect to any model, leverage private data, and automate complex tasks. Sign up for a free account to get started.
+You can test the `mcp-rss` server and other MCP servers on the [Mission Squad](https://missionsquad.ai) platform. Mission Squad is an Agentic AI Platform that allows you to build, manage, and deploy cooperative agents that connect to any model, leverage private data, and automate complex tasks. Sign up for a free account to get started
