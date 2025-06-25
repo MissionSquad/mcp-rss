@@ -27,15 +27,13 @@ jobs:
       with:
         node-version: '20' # Match your project's Node.js version
         registry-url: 'https://registry.npmjs.org/'
-        cache: 'npm' # Or 'yarn'
+        cache: 'yarn'
 
     - name: Install Dependencies
-      run: npm ci
-      # Or: yarn install --frozen-lockfile
+      run: yarn install --frozen-lockfile
 
     - name: Build Project
-      run: npm run build
-      # Or: yarn build
+      run: yarn build
 
     # Optional: Version bumping (e.g., using standard-version)
     # - name: Bump version and generate changelog
@@ -50,7 +48,7 @@ jobs:
     #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Publish to npm
-      run: npm publish --access public # Or restricted if private package
+      run: yarn publish --access public
       env:
         # Use a Node Auth Token stored as a GitHub Secret
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

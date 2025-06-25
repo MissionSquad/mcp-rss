@@ -19,15 +19,13 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '20' # Match your project's Node.js version
-        cache: 'npm' # Or 'yarn' if you use yarn
+        cache: 'yarn'
 
     - name: Install Dependencies
-      run: npm ci # Use 'ci' for faster, deterministic installs in CI
-      # Or: yarn install --frozen-lockfile
+      run: yarn install --frozen-lockfile
 
     - name: Build Project
-      run: npm run build
-      # Or: yarn build
+      run: yarn build
 
     # Add Linting Step (Optional but Recommended)
     # - name: Lint Code
