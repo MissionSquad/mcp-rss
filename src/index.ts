@@ -17,10 +17,10 @@ const server = new FastMCP({
 const FetchRssFeedSchema = z.object({
   url: z.string().url().describe("The URL of the RSS feed to fetch"),
   useDescriptionAsContent: z
-    .boolean()
+    .string()
     .optional()
     .describe(
-      "If true, use description field as content instead of content field"
+      "If 'true', use description field as content instead of content field"
     ),
 });
 
@@ -45,7 +45,7 @@ server.addTool({
 
       // Fetch feed
       const result = await rssReader.fetchFeed(args.url, {
-        useDescriptionAsContent: args.useDescriptionAsContent,
+        useDescriptionAsContent: args.useDescriptionAsContent === 'true',
         etag: cacheMeta?.etag,
         lastModified: cacheMeta?.lastModified,
       });
@@ -77,11 +77,11 @@ server.addTool({
 const FetchMultipleFeedsSchema = z.object({
   urls: z.array(z.string().url()).describe("Array of RSS feed URLs to fetch"),
   parallel: z
-    .boolean()
+    .string()
     .optional()
-    .default(true)
+    .default("true")
     .describe(
-      "Whether to fetch feeds in parallel (true) or sequentially (false)"
+      "If 'true', fetch feeds in parallel; otherwise, fetch sequentially"
     ),
 });
 
@@ -124,7 +124,7 @@ server.addTool({
 
     let results: MultiFeedResult[];
 
-    if (args.parallel) {
+    if (args.parallel === 'true') {
       // Parallel fetching with concurrency limit
       const chunks: string[][] = [];
       for (
@@ -333,10 +333,10 @@ const ExtractFeedContentSchema = z.object({
     .default("text")
     .describe("Output format for the content"),
   includeMetadata: z
-    .boolean()
+    .string()
     .optional()
-    .default(false)
-    .describe("Include item metadata (date, author, etc) in output"),
+    .default("false")
+    .describe("If 'true', include item metadata (date, author, etc) in output"),
 });
 
 server.addTool({
@@ -369,10 +369,10 @@ server.addTool({
       };
 
       if (args.format === "json") {
-        return args.includeMetadata ? { ...metadata, content } : { content };
+        return args.includeMetadata === 'true' ? { ...metadata, content } : { content };
       }
 
-      const metadataText = args.includeMetadata
+      const metadataText = args.includeMetadata === 'true'
         ? [
             item.title ? `Title: ${item.title}` : "",
             item.author ? `Author: ${item.author}` : "",

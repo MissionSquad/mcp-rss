@@ -79,12 +79,12 @@ export interface FeedMetadata {
 // Tool Parameter Types
 export interface FetchRssFeedParams {
   url: string;
-  useDescriptionAsContent?: boolean;
+  useDescriptionAsContent?: 'true' | 'false';
 }
 
 export interface FetchMultipleFeedsParams {
   urls: string[];
-  parallel?: boolean;
+  parallel?: 'true' | 'false';
 }
 
 export interface MonitorFeedUpdatesParams {
@@ -101,7 +101,7 @@ export interface SearchFeedItemsParams {
 export interface ExtractFeedContentParams {
   url: string;
   format?: 'markdown' | 'text' | 'html' | 'json';
-  includeMetadata?: boolean;
+  includeMetadata?: 'true' | 'false';
 }
 
 export interface FeedHeadline {
