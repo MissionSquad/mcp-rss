@@ -15,7 +15,7 @@ const server = new FastMCP({
 
 // Tool 1: Fetch RSS Feed
 const FetchRssFeedSchema = z.object({
-  url: z.string().url().describe("The URL of the RSS feed to fetch"),
+  url: z.string().describe("The URL of the RSS feed to fetch"),
   useDescriptionAsContent: z
     .string()
     .optional()
@@ -75,7 +75,7 @@ server.addTool({
 
 // Tool 2: Fetch Multiple Feeds
 const FetchMultipleFeedsSchema = z.object({
-  urls: z.array(z.string().url()).describe("Array of RSS feed URLs to fetch"),
+  urls: z.array(z.string()).describe("Array of RSS feed URLs to fetch"),
   parallel: z
     .string()
     .optional()
@@ -168,7 +168,7 @@ server.addTool({
 
 // Tool 3: Monitor Feed Updates
 const MonitorFeedUpdatesSchema = z.object({
-  url: z.string().url().describe("The RSS feed URL to monitor"),
+  url: z.string().describe("The RSS feed URL to monitor"),
   since: z
     .union([
       z.number().describe("Timestamp in milliseconds to check updates since"),
@@ -238,7 +238,7 @@ server.addTool({
 
 // Tool 4: Search Feed Items
 const SearchFeedItemsSchema = z.object({
-  feeds: z.array(z.string().url()).describe("RSS feed URLs to search across"),
+  feeds: z.array(z.string()).describe("RSS feed URLs to search across"),
   query: z.string().describe("Search query string"),
   searchIn: z
     .enum(["title", "description", "content", "all"])
@@ -326,7 +326,7 @@ server.addTool({
 
 // Tool 5: Extract Feed Content
 const ExtractFeedContentSchema = z.object({
-  url: z.string().url().describe("The RSS feed URL to extract content from"),
+  url: z.string().describe("The RSS feed URL to extract content from"),
   format: z
     .enum(["markdown", "text", "html", "json"])
     .optional()
@@ -441,7 +441,7 @@ server.addTool({
 
 // Tool 6: Get Feed Headlines
 const GetFeedHeadlinesSchema = z.object({
-  url: z.string().url().describe("The RSS feed URL to get headlines from"),
+  url: z.string().describe("The RSS feed URL to get headlines from"),
   format: z
     .enum(["markdown", "text", "html", "json"])
     .optional()
