@@ -1,6 +1,6 @@
 {
   "name": "@missionsquad/mcp-rss",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "MCP server for fetching, parsing, and managing RSS feeds",
   "main": "dist/index.js",
   "type": "module",
