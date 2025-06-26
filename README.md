@@ -2,6 +2,10 @@
 
 A Model Context Protocol (MCP) server for fetching, parsing, and managing RSS feeds.
 
+<a href="https://glama.ai/mcp/servers/@MissionSquad/mcp-rss">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@MissionSquad/mcp-rss/badge" alt="@missionsquad/mcp-rss MCP server" />
+</a>
+
 ## Features
 
 *   Fetch and parse RSS/Atom feeds
@@ -61,4 +65,4 @@ Configure the server using environment variables defined in `.env`. See `.env.ex
 
 ## Try it on Mission Squad
 
-You can test the `mcp-rss` server and other MCP servers on the [Mission Squad](https://missionsquad.ai) platform. Mission Squad is an Agentic AI Platform that allows you to build, manage, and deploy cooperative agents that connect to any model, leverage private data, and automate complex tasks. Sign up for a free account to get started
+You can test the `mcp-rss` server and other MCP servers on the [Mission Squad](https://missionsquad.ai) platform. Mission Squad is an Agentic AI Platform that allows you to build, manage, and deploy cooperative agents that connect to any model, leverage private data, and automate complex tasks. Sign up for a free account to get started.
