@@ -14,6 +14,8 @@ A Model Context Protocol (MCP) server for fetching, parsing, and managing RSS fe
 
 ## Getting Started
 
+* Install: `yarn add @missionsquad/mcp-rss` or `npm install @missionsquad/mcp-rss`
+
 ### Prerequisites
 
 *   Node.js v20 or later
