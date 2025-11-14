@@ -701,10 +701,10 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@missionsquad/fastmcp@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@missionsquad/fastmcp/-/fastmcp-1.1.0.tgz#3d0af3ff82e88d335e817d1bbaaedf634a00db27"
-  integrity sha512-4Efm0Cr60ZoBY7xU1JmoQq+QUyqqHzq6BCU7Y1huCcdyGnxldTLotXZ25iML7V6Rve5Q8Xdljm+Dp6YmY8qxHg==
+"@missionsquad/fastmcp@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@missionsquad/fastmcp/-/fastmcp-1.1.1.tgz#43036baaedb9d2eb6b426c5dd8af843266d93ba8"
+  integrity sha512-g+TY9b/GLw5usDIocwrETX/EdmXEVSh7Ytnb9DtNDrgpDlXfiWkYlFXnNe1uSk1vr6/zn0+3w4hYxOhOK00eIg==
   dependencies:
     "@modelcontextprotocol/sdk" "^1.12.1"
     execa "^9.5.2"
