@@ -2,7 +2,7 @@ import { parseFeed } from '@rowanmanning/feed-parser';
 import { Feed } from '@rowanmanning/feed-parser/lib/feed/base.js';
 import { FeedItem as RSSFeedItem } from '@rowanmanning/feed-parser/lib/feed/item/base.js';
 import { FeedResult, FeedInfo, FeedItem, Enclosure } from '../types.js';
-import { httpClient } from '../utils/http.js';
+import { httpClient, getRetryDelayMs, sleep } from '../utils/http.js';
 import { toEpochMs } from '../utils/date.js';
 import { extractCleanContent, sanitizeString } from '../utils/content.js';
 import { logger } from '../logger.js';
@@ -18,44 +18,89 @@ export class RSSReader {
     etag?: string;
     lastModified?: string;
     notModified: boolean;
+    contentType?: string;
   }> {
     logger.debug(`Fetching RSS feed from: ${url}`);
-    
+
     const headers: Record<string, string> = {
       'User-Agent': config.rssUserAgent,
       'Accept': 'application/rss+xml, application/atom+xml, application/xml, text/xml, */*',
     };
-    
+
     if (etag) {
       headers['If-None-Match'] = etag;
     }
     if (lastModified) {
       headers['If-Modified-Since'] = lastModified;
     }
-    
-    try {
-      const response = await httpClient.get(url, {
-        headers,
-        timeout: config.rssRequestTimeout,
-        maxRedirects: config.rssFollowRedirects ? 5 : 0,
-        responseType: 'text',
-        maxContentLength: config.rssMaxResponseSize,
-      });
-      
+
+    const maxAttempts = config.rssRateLimitMaxRetries + 1;
+
+    for (let attempt = 1; ; attempt++) {
+      let response;
+      try {
+        response = await httpClient.get(url, {
+          headers,
+          timeout: config.rssRequestTimeout,
+          maxRedirects: config.rssFollowRedirects ? 5 : 0,
+          responseType: 'text',
+          maxContentLength: config.rssMaxResponseSize,
+        });
+      } catch (error: any) {
+        logger.error(`Error fetching RSS feed from ${url}: ${error.message}`);
+        throw new Error(`HTTP request failed: ${error.message}`);
+      }
+
       if (response.status === 304) {
         logger.debug(`Feed not modified: ${url}`);
         return { data: '', notModified: true, etag: response.headers.etag, lastModified: response.headers['last-modified'] };
       }
-      
+
+      // Feed hosts (e.g. reddit.com) rate limit aggressively; honor their
+      // advertised reset delay instead of surfacing a garbage body downstream.
+      if (response.status === 429) {
+        const delayMs = getRetryDelayMs(response.headers, attempt);
+        if (attempt < maxAttempts && delayMs <= config.rssRateLimitMaxDelay) {
+          logger.warn(
+            `Rate limited (HTTP 429) fetching ${url}; retrying in ${Math.ceil(delayMs / 1000)}s (attempt ${attempt}/${maxAttempts})`
+          );
+          await sleep(delayMs);
+          continue;
+        }
+        logger.error(`Rate limited (HTTP 429) fetching ${url}; giving up after ${attempt} attempt(s)`);
+        throw new Error(
+          `HTTP 429 Too Many Requests — the feed host is rate limiting requests; retry in ~${Math.ceil(delayMs / 1000)}s`
+        );
+      }
+
+      if (response.status >= 400) {
+        logger.error(`HTTP ${response.status} fetching RSS feed from ${url}`);
+        throw new Error(
+          `HTTP ${response.status}${response.statusText ? ` ${response.statusText}` : ''} — the feed host rejected the request`
+        );
+      }
+
+      if (response.status >= 300) {
+        const location = response.headers.location;
+        logger.error(`HTTP ${response.status} redirect not followed for ${url}`);
+        throw new Error(
+          `HTTP ${response.status} redirect${location ? ` to ${location}` : ''} was not followed (RSS_FOLLOW_REDIRECTS is disabled)`
+        );
+      }
+
+      const body = typeof response.data === 'string' ? response.data : '';
+      if (!body.trim()) {
+        logger.error(`Empty response body (HTTP ${response.status}) from ${url}`);
+        throw new Error(`Received an empty response body (HTTP ${response.status})`);
+      }
+
       return {
-        data: response.data,
+        data: body,
         etag: response.headers.etag,
         lastModified: response.headers['last-modified'],
         notModified: false,
+        contentType: response.headers['content-type'],
       };
-    } catch (error: any) {
-      logger.error(`Error fetching RSS feed from ${url}: ${error.message}`);
-      throw new Error(`Failed to fetch RSS feed: ${error.message}`);
     }
   }
   
@@ -162,20 +207,22 @@ export class RSSReader {
     }
   ): Promise<FeedResult> {
     // Fetch raw feed
-    const { data, etag, lastModified, notModified } = await this.fetchRawFeed(
+    const { data, etag, lastModified, notModified, contentType } = await this.fetchRawFeed(
       url,
       options?.etag,
       options?.lastModified
     );
-    
+
     if (notModified) {
       throw new Error('NOT_MODIFIED');
     }
-    
+
     // Parse feed
     const parsed = await this.parseFeed(data);
     if (!parsed) {
-      throw new Error('Failed to parse feed XML');
+      throw new Error(
+        `Failed to parse feed XML — the response does not appear to be a valid RSS/Atom feed${contentType ? ` (content-type: ${contentType})` : ''}`
+      );
     }
     
     // Format feed
