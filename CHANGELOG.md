@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.9](https://github.com/missionsquad/mcp-rss/compare/v1.0.8...v1.0.9) (2026-08-01)
+
+
+### Bug Fixes
+
+* surface HTTP errors and retry rate-limited feed fetches [release] ([1a61d3b](https://github.com/missionsquad/mcp-rss/commit/1a61d3bb6c5b053a11f667ba246a54bf790511b0))
+
 ### [1.0.8](https://github.com/missionsquad/mcp-rss/compare/v1.0.7...v1.0.8) (2025-11-14)
 
 ### [1.0.7](https://github.com/missionsquad/mcp-rss/compare/v1.0.6...v1.0.7) (2025-11-14)
