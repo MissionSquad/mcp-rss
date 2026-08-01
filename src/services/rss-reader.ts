@@ -9,6 +9,10 @@ import { logger } from '../logger.js';
 import { config } from '../config.js';
 import { nanoid } from 'nanoid';
 
+// Padding added to server-requested retry delays so the retry lands past the
+// rate-limit window boundary; excluded from the rssRateLimitMaxDelay cap check.
+const RATE_LIMIT_RETRY_BUFFER_MS = 1000;
+
 export class RSSReader {
   /**
    * Fetches raw RSS feed data from a URL
@@ -61,10 +65,11 @@ export class RSSReader {
       if (response.status === 429) {
         const delayMs = getRetryDelayMs(response.headers, attempt);
         if (attempt < maxAttempts && delayMs <= config.rssRateLimitMaxDelay) {
+          const sleepMs = delayMs + RATE_LIMIT_RETRY_BUFFER_MS;
           logger.warn(
-            `Rate limited (HTTP 429) fetching ${url}; retrying in ${Math.ceil(delayMs / 1000)}s (attempt ${attempt}/${maxAttempts})`
+            `Rate limited (HTTP 429) fetching ${url}; retrying in ${Math.ceil(sleepMs / 1000)}s (attempt ${attempt}/${maxAttempts})`
           );
-          await sleep(delayMs);
+          await sleep(sleepMs);
           continue;
         }
         logger.error(`Rate limited (HTTP 429) fetching ${url}; giving up after ${attempt} attempt(s)`);

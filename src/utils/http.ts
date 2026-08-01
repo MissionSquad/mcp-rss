@@ -15,26 +15,25 @@ function headerValue(headers: AxiosResponse['headers'], name: string): string | 
 }
 
 /**
- * Derives how long to wait before retrying a rate-limited (HTTP 429) request,
- * based on standard rate-limit response headers.
+ * Derives how long the server is asking us to wait before retrying a
+ * rate-limited (HTTP 429) request, based on standard rate-limit response headers.
  *
  * Precedence: `Retry-After` (delta-seconds or HTTP-date), then `X-RateLimit-Reset`
  * (delta-seconds, or epoch seconds when the value is implausibly large as a delta).
- * Falls back to a linear backoff when neither header is present. A small buffer is
- * added so the retry lands past the window boundary.
+ * Falls back to a linear backoff when neither header is present. Callers should
+ * add their own small buffer when sleeping so the retry lands past the window
+ * boundary; the raw value is returned so it can be compared against a configured cap.
  */
 export function getRetryDelayMs(headers: AxiosResponse['headers'], attempt: number): number {
-  const bufferMs = 1000;
-
   const retryAfter = headerValue(headers, 'retry-after');
   if (retryAfter !== null) {
     const seconds = Number(retryAfter);
     if (Number.isFinite(seconds)) {
-      return Math.max(0, seconds * 1000) + bufferMs;
+      return Math.max(0, seconds * 1000);
     }
     const dateMs = Date.parse(retryAfter);
     if (!Number.isNaN(dateMs)) {
-      return Math.max(0, dateMs - Date.now()) + bufferMs;
+      return Math.max(0, dateMs - Date.now());
     }
   }
 
@@ -43,7 +42,7 @@ export function getRetryDelayMs(headers: AxiosResponse['headers'], attempt: numb
     const value = Number(reset);
     if (Number.isFinite(value)) {
       const deltaMs = value > 1_000_000_000 ? value * 1000 - Date.now() : value * 1000;
-      return Math.max(0, deltaMs) + bufferMs;
+      return Math.max(0, deltaMs);
     }
   }
 
