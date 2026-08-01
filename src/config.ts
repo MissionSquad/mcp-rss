@@ -25,6 +25,8 @@ const ConfigSchema = z.object({
   
   // Rate limiting
   rssRateLimitPerMinute: z.coerce.number().default(60),
+  rssRateLimitMaxRetries: z.coerce.number().min(0).default(2), // Extra attempts after an HTTP 429
+  rssRateLimitMaxDelay: z.coerce.number().min(0).default(65000), // Max wait per 429 retry in ms; longer server-requested delays fail fast
   
   // Logging
   logLevel: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
@@ -43,6 +45,8 @@ export const config = ConfigSchema.parse({
   rssCacheMaxSize: process.env.RSS_CACHE_MAX_SIZE,
   rssCacheCleanupInterval: process.env.RSS_CACHE_CLEANUP_INTERVAL,
   rssRateLimitPerMinute: process.env.RSS_RATE_LIMIT_PER_MINUTE,
+  rssRateLimitMaxRetries: process.env.RSS_RATE_LIMIT_MAX_RETRIES,
+  rssRateLimitMaxDelay: process.env.RSS_RATE_LIMIT_MAX_DELAY,
   logLevel: process.env.LOG_LEVEL,
 });
 
